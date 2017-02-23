@@ -26,7 +26,6 @@ def app(environ, start_response):
         response = processing(request)
 
     if 'reporting' in environ['PATH_INFO'] and environ['REQUEST_METHOD'] == 'POST':
-        print(request)
         response = reporting(request)
 
     return response

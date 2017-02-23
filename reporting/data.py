@@ -7,6 +7,18 @@ from reporting.response import WSEventReport, ACHJHResponse
 
 now = (datetime.datetime.now()).replace(hour=0, minute=0, second=0)
 
+VOIDED = ACHJHResponse().with_event(WSEventReport(
+        EventType=Et.APPROVED.status,
+        TransactionStatus=Ts.VOIDED.status,
+        SettlementStatus=Ss.NO_SETTLEMENT_NEEDED.status,
+        EventDateTime=now - datetime.timedelta(minutes=5))
+    ).with_event(WSEventReport(
+        EventType=Et.VOIDED.status,
+        TransactionStatus=Ts.VOIDED.status,
+        SettlementStatus=Ss.NO_SETTLEMENT_NEEDED.status,
+        EventDateTime=now - datetime.timedelta(minutes=3))
+    )
+
 SETTLED = ACHJHResponse().with_event(WSEventReport(
         EventType=Et.APPROVED.status,
         TransactionStatus=Ts.APPROVED.status,

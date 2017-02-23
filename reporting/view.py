@@ -1,16 +1,17 @@
 from lxml import objectify
 
-from reporting.data import SETTLED
+from reporting.data import VOIDED
 from utils import unwrap
 
 
 def reporting(request):
     request = objectify.fromstring(unwrap(request))
 
-    tn = 'I57AAG5NUM'
-    rn = 'JNKJDSWLXEO'
+    tn = 'BJGI0317N0'
+    rn = 'OGWQKCWESFG'
 
-    response = SETTLED.with_tn(tn).with_rn(rn).build()
+    # response = SETTLED.with_tn(tn).with_rn(rn).build()
+    response = VOIDED.with_tn(tn).with_rn(rn).build()
     # response = APPROVED.with_tn(tn).with_rn(rn).build()
     # response = REFUND.with_tn(tn).with_rn(rn).build()
     # response = FULL_REFUND.with_tn(tn).with_rn(rn).build()
