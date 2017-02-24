@@ -65,11 +65,10 @@ class ACHJHResponse:
         return self
 
     def __str__(self):
-        elt = get_object_as_xml(GetHistoricalEventReportResponse(GetHistoricalEventReportResult=self.events),
-                                GetHistoricalEventReportResponse)
-        return wrap(etree.tostring(elt, pretty_print=True).decode('utf-8'))\
-            .replace("<GetHistoricalEventReportResponse", '''<GetHistoricalEventReportResponse
-            xmlns="https://ssl.selectpayment.com/PV"''')
+        err = GetHistoricalEventReportResponse(GetHistoricalEventReportResult=self.events)
+        err.xmlns = "https://ssl.selectpayment.com/PV"
+        elt = get_object_as_xml(err, GetHistoricalEventReportResponse)
+        return wrap(etree.tostring(elt, pretty_print=True).decode('utf-8'))
 
     def build(self):
-        return [self.__str__().encode()]
+        return self

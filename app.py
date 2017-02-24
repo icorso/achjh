@@ -1,5 +1,5 @@
-from wsgiref.util import setup_testing_defaults
 from wsgiref.simple_server import make_server
+from wsgiref.util import setup_testing_defaults
 from wsgiref.validate import validator
 
 from processing.view import processing
@@ -28,7 +28,9 @@ def app(environ, start_response):
     if 'reporting' in environ['PATH_INFO'] and environ['REQUEST_METHOD'] == 'POST':
         response = reporting(request)
 
-    return response
+    print(environ['PATH_INFO'] + " request :\n" + request + "\n"
+          + environ['PATH_INFO'] + " response :\n" + response.__str__())
+    return [response.__str__().encode()]
 
 validator_app = validator(app)
 httpd = make_server('', 8000, validator_app)

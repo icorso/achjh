@@ -19,8 +19,6 @@ class BaseResponse(ComplexModel):
         elt = get_object_as_xml(self, self.__class__)
         return wrap(etree.tostring(elt, pretty_print=True).decode('utf-8'))
 
-    def encode(self):
-        return [self.__str__().encode()]
     Data = XmlData(Unicode)
 
 

@@ -1,4 +1,4 @@
-from spyne import ComplexModel, String, Int, DateTime, Unicode, XmlData, Array
+from spyne import ComplexModel, String, Int, DateTime, Unicode, XmlData, Array, XmlAttribute
 
 from utils import DATETIME_PATTERN
 
@@ -18,6 +18,7 @@ class WSEventReport(ComplexModel):
 
 
 class GetHistoricalEventReportResponse(ComplexModel):
+    xmlns = XmlAttribute(Unicode, use='required')
     GetHistoricalEventReportResult = Array(WSEventReport)
 
 

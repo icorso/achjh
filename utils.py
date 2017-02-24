@@ -1,6 +1,7 @@
 import random
 import string
 from datetime import datetime
+from lxml import etree
 
 DATETIME_PATTERN = '%Y-%m-%dT%H:%M:%S'
 

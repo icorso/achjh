@@ -40,5 +40,4 @@ def processing(request):
 
         if str(request.originalReferenceNumber).endswith(bad_refund_state):
             response = INVALID_REFUND
-
-    return response.encode()
+    return response
