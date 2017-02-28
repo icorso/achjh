@@ -2,6 +2,7 @@ from wsgiref.simple_server import make_server
 from wsgiref.util import setup_testing_defaults
 from wsgiref.validate import validator
 
+from logger import log
 from processing.view import processing
 from reporting.view import reporting
 
@@ -28,8 +29,7 @@ def app(environ, start_response):
     if 'reporting' in environ['PATH_INFO'] and environ['REQUEST_METHOD'] == 'POST':
         response = reporting(request)
 
-    print(environ['PATH_INFO'] + " request :\n" + request + "\n"
-          + environ['PATH_INFO'] + " response :\n" + response.__str__())
+    log.info('%s\nRequest: %s\nResponse: %s' % (environ['PATH_INFO'], request, response))
     return [response.__str__().encode()]
 
 validator_app = validator(app)
