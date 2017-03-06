@@ -7,11 +7,13 @@ from utils import wrap
 
 
 class ACHJHResponse:
-    def __init__(self):
-        self._tn = None
-        self._rn = None
+    def __init__(self, tn=None, rn=None, events=None):
+        if events is None:
+            events = []
+        self._tn = tn
+        self._rn = rn
         self._event = None
-        self._events = []
+        self._events = events
 
     @property
     def tn(self):
@@ -65,9 +67,9 @@ class ACHJHResponse:
         return self
 
     def __str__(self):
-        err = GetHistoricalEventReportResponse(GetHistoricalEventReportResult=self.events)
-        err.xmlns = "https://ssl.selectpayment.com/PV"
-        elt = get_object_as_xml(err, GetHistoricalEventReportResponse)
+        response = GetHistoricalEventReportResponse(GetHistoricalEventReportResult=self._events)
+        response.xmlns = "https://ssl.selectpayment.com/PV"
+        elt = get_object_as_xml(response, GetHistoricalEventReportResponse)
         return wrap(etree.tostring(elt, pretty_print=True).decode('utf-8'))
 
     def build(self):

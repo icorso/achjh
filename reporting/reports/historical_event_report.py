@@ -4,6 +4,12 @@ from utils import DATETIME_PATTERN
 
 
 class WSEventReport(ComplexModel):
+    def tn(self, value):
+        self.TransactionNumber = value
+
+    def rn(self, value):
+        self.ReferenceNumber = value
+
     TransactionStatus = String
     TransactionNumber = String
     ReferenceNumber = String

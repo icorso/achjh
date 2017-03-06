@@ -18,11 +18,11 @@ def processing(request):
         if '.01' in str(request.transaction.TotalAmount):  # Error_Invalid_State for refund
             response = DEFAULT_AUTH
             response.AuthorizeTransactionResult.ReferenceNumber = rand_str(5).upper() + bad_refund_state
-        if '.11' in str(request.transaction.TotalAmount):
+        if '.02' in str(request.transaction.TotalAmount):
             response = VELOCITY_COUNT
-        if '.21' in str(request.transaction.TotalAmount):
+        if '.03' in str(request.transaction.TotalAmount):
             response = UNSUFFICIENT_FUNDS
-        if '.31' in str(request.transaction.TotalAmount):
+        if '.04' in str(request.transaction.TotalAmount):
             response = INVALID_ROUTING_NUM
             message = response.AuthorizeTransactionResult.ResponseMessage % request.transaction.RoutingNumber
             response.AuthorizeTransactionResult.ResponseMessage = message
@@ -30,6 +30,7 @@ def processing(request):
     if 'VoidTransaction' in request.tag:
         response = DEFAULT_VOID
         response.VoidTransactionResult.ReferenceNumber = str(request.originalReferenceNumber)
+        response.VoidTransactionResult.ResponseMessage = None
 
     if 'RefundTransaction' in request.tag:
         response = DEFAULT_REFUND
@@ -40,4 +41,5 @@ def processing(request):
 
         if str(request.originalReferenceNumber).endswith(bad_refund_state):
             response = INVALID_REFUND
+
     return response

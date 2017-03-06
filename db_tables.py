@@ -37,6 +37,16 @@ class AchjhTransaction(Base):
         return "<AchjhTransaction(id='%s', rrn='%s', routing_number='%s')>" % (self.id, self.rrn, self.routing_number)
 
 
+class AchjhTransactionStateHistory(Base):
+    __tablename__ = 'ach_jh_transaction_state_history'
+    id = Column(Integer, primary_key=True)
+    transaction_id = Column(Integer)
+    event_date_time = Column(DateTime)
+    event_type = Column(Integer)
+    transaction_status = Column(Integer)
+    settlement_status = Column(Integer)
+
+
 class OpenTransaction(Base):
     __tablename__ = 'open_transaction'
 
@@ -44,14 +54,38 @@ class OpenTransaction(Base):
     terminalid = Column(Integer)
     txndate = Column(DateTime)
     status = Column(Integer)
-    amount = Column(Float) #amount	decimal(13,3) ?
+    amount = Column(Float)
     cardholdername = Column(String)
     orderid = Column(String)
     description = Column(String)
     responsecode = Column(String)
     responsetext = Column(String)
+    originaltransactionid = Column(String)
     approvalcode = Column(String)
     uniqueref = Column(String)
+    rrn = Column(String)
 
     def __repr__(self):
         return "<OpenTransaction(id='%s', rrn='%s', uniqueref='%s')>" % (self.id, self.rrn, self.uniqueref)
+
+
+class ClosedTransaction(Base):
+    __tablename__ = 'closed_transaction'
+
+    id = Column(Integer, primary_key=True)
+    terminalid = Column(Integer)
+    txndate = Column(DateTime)
+    status = Column(Integer)
+    amount = Column(Float)
+    cardholdername = Column(String)
+    orderid = Column(String)
+    description = Column(String)
+    responsecode = Column(String)
+    responsetext = Column(String)
+    originaltransactionid = Column(String)
+    approvalcode = Column(String)
+    uniqueref = Column(String)
+    rrn = Column(String)
+
+    def __repr__(self):
+        return "<ClosedTransaction(id='%s', rrn='%s', uniqueref='%s')>" % (self.id, self.rrn, self.uniqueref)

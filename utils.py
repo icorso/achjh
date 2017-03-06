@@ -6,7 +6,7 @@ from lxml import etree
 DATETIME_PATTERN = '%Y-%m-%dT%H:%M:%S'
 
 
-def unwrap(xml):
+def unwrap(xml):  # TODO
     header = '''<?xml version='1.0' encoding='UTF-8'?><S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"><SOAP-ENV:Header/><S:Body>'''
     footer = '''</S:Body></S:Envelope>'''
     xml = xml.replace(header, '')
@@ -14,7 +14,7 @@ def unwrap(xml):
     return xml
 
 
-def wrap(xml):
+def wrap(xml):  # TODO
     header = '''<?xml version='1.0' encoding='UTF-8'?><S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"><SOAP-ENV:Header/><S:Body>'''
     footer = '''</S:Body></S:Envelope>'''
     return header + xml + footer

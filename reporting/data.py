@@ -33,13 +33,39 @@ SETTLED = ACHJHResponse().with_event(WSEventReport(
         EventType=Et.ORIGINATED.status,
         TransactionStatus=Ts.PROCESSED.status,
         SettlementStatus=Ss.PENDING.status,
-        EventDateTime=now - datetime.timedelta(days=9))
+        EventDateTime=now - datetime.timedelta(days=9, hours=2))
     ).with_event(WSEventReport(
         EventType=Et.SETTLED.status,
         TransactionStatus=Ts.PROCESSED.status,
         SettlementStatus=Ss.SETTLED.status,
-        EventDateTime=now - datetime.timedelta(days=2))
-)
+        EventDateTime=now - datetime.timedelta(days=3, hours=7))
+    # ).with_event(WSEventReport(
+    #     EventType=Et.RETURNED_NSF.status,
+    #     TransactionStatus=Ts.UNCOLLECTED_NSF.status,
+    #     SettlementStatus=Ss.CHARGED_BACK.status,
+    #     EventDateTime=now - datetime.timedelta(days=2, hours=1, minutes=40))
+    # ).with_event(WSEventReport(
+    #     EventType=Et.RETURNED_NSF.status,
+    #     TransactionStatus=Ts.UNCOLLECTED_NSF.status,
+    #     SettlementStatus=Ss.CHARGED_BACK.status,
+    #     EventDateTime=now - datetime.timedelta(days=1))
+    # ).with_event(WSEventReport(
+    #     EventType=Et.RETURNED_NSF.status,
+    #     TransactionStatus=Ts.UNCOLLECTED_NSF.status,
+    #     SettlementStatus=Ss.CHARGED_BACK.status,
+    #     EventDateTime=now - datetime.timedelta(hours=12))
+    # remove
+    # ).with_event(WSEventReport(
+    #     EventType=Et.APPROVED.status,
+    #     TransactionStatus=Ts.APPROVED.status,
+    #     SettlementStatus=Ss.TO_BE_ORIGINATED.status,
+    #     EventDateTime=now - datetime.timedelta(days=0, hours=2))
+    # ).with_event(WSEventReport(
+    #     EventType=Et.RETURNED_NSF.status,
+    #     TransactionStatus=Ts.UNCOLLECTED_NSF.status,
+    #     SettlementStatus=Ss.CHARGED_BACK.status,
+    #     EventDateTime=now - datetime.timedelta(hours=1))
+    )
 
 BAD_ACCOUNT = ACHJHResponse().with_event(WSEventReport(
         EventType=Et.APPROVED.status,
@@ -231,25 +257,25 @@ FULL_REFUND = ACHJHResponse().with_event(WSEventReport(
         SettlementStatus=Ss.SETTLED.status,
         EventDateTime=now - datetime.timedelta(days=2, hours=5))
     ).with_event(WSEventReport(
-        ReferenceNumber='HNNAXGAKBZS',
+        ReferenceNumber='PHSTSKYNUGQ',
         EventType=Et.APPROVED.status,
         TransactionStatus=Ts.PROCESSED.status,
         SettlementStatus=Ss.PENDING.status,
         EventDateTime=now - datetime.timedelta(days=2, hours=5))
     ).with_event(WSEventReport(
-        ReferenceNumber='HNNAXGAKBZS',
+        ReferenceNumber='PHSTSKYNUGQ',
         EventType=Et.PROCESSED.status,
         TransactionStatus=Ts.PROCESSED.status,
         SettlementStatus=Ss.PENDING.status,
         EventDateTime=now - datetime.timedelta(days=1, hours=4))
     ).with_event(WSEventReport(
-        ReferenceNumber='HNNAXGAKBZS',
+        ReferenceNumber='PHSTSKYNUGQ',
         EventType=Et.ORIGINATED.status,
         TransactionStatus=Ts.PROCESSED.status,
         SettlementStatus=Ss.PENDING.status,
         EventDateTime=now - datetime.timedelta(days=1))
     ).with_event(WSEventReport(
-        ReferenceNumber='HNNAXGAKBZS',
+        ReferenceNumber='PHSTSKYNUGQ',
         EventType=Et.SETTLED.status,
         TransactionStatus=Ts.PROCESSED.status,
         SettlementStatus=Ss.PENDING.status,

@@ -1,6 +1,7 @@
 # coding=utf-8
 
 from sqlalchemy import create_engine
+from sqlalchemy import text
 from sqlalchemy.orm import sessionmaker
 
 
@@ -31,7 +32,7 @@ class DbSession(object):
         s.close()
         return result
 
-    def query_all(self, table, filter_):
+    def query_all(self, table, filter_=text('')):
         """Выборка всех записей по указанному фильтру из таблицы
         Example: user.query_all(Advance, Advance.advance_time.like('2015-10-08%'))
         Args:
