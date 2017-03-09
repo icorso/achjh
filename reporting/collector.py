@@ -1,7 +1,7 @@
 from sqlalchemy import and_
 
 from db import DbSession
-from db_tables import OpenTransaction, AchjhTransactionStateHistory, ClosedTransaction
+from db_tables import OpenTransaction, AchjhTransactionStateHistory, ClosedTransaction, AchjhTransaction
 from logger import log
 
 db = DbSession()
@@ -17,8 +17,9 @@ def txs_without_events(tid=None):
     txs_filter = and_(OpenTransaction.responsecode != 'D')
     if tid:
         txs_filter = and_(OpenTransaction.terminalid == tid, OpenTransaction.responsecode != 'D')
+
     for tx in db.query_all(OpenTransaction, txs_filter):
-        if db.query_first(AchjhTransactionStateHistory, AchjhTransactionStateHistory.transaction_id == tx.id) is None:
+        if len(has_events(tx.id)) == 0:
             txs.append(tx)
 
     for t in txs:  # exclude parent refund txs
@@ -36,6 +37,14 @@ def get_tx_by_id(tx_id):
         return tx
     else:
         return db.query_first(ClosedTransaction, ClosedTransaction.id == tx_id)
+
+
+def get_gray_area_txs():
+    txs = []
+    for t in db.query_all(ClosedTransaction, ClosedTransaction.amount.contains('.90')):
+        if db.query_first(AchjhTransaction, and_(AchjhTransaction.gray_area == 0, AchjhTransaction.id == t.id)):
+            txs.append(t)
+    return txs
 
 
 def has_events(tx_id):

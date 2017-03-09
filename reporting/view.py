@@ -6,7 +6,7 @@ from constants import SettlementStatus as Ss
 from constants import TransactionStatus as Ts
 from db import DbSession
 from db_tables import OpenTransaction
-from reporting.collector import txs_without_events, get_tx_by_id, has_events
+from reporting.collector import txs_without_events, get_tx_by_id, has_events, get_gray_area_txs
 from reporting.reports.historical_event_report import WSEventReport
 from reporting.response import ACHJHResponse
 
@@ -49,6 +49,9 @@ def reporting(request):
         events.extend(events_set)
 
         db.update(OpenTransaction, OpenTransaction.id == t.id, {'txndate': events_set[0].EventDateTime})
+
+    for t in get_gray_area_txs():  # gray area transactions
+        events.append(collection_failed(tn=t.uniqueref, rn=t.rrn))
 
     response = ACHJHResponse()
     response.events = events
@@ -94,6 +97,12 @@ def returned_nsf(tn, rn, at=now - datetime.timedelta(days=3)):
 def sent_to_collection(tn, rn, at=now - datetime.timedelta(days=2)):
     return WSEventReport(TransactionNumber=tn, ReferenceNumber=rn, EventDateTime=at,
                          EventType=Et.SENT_TO_COLLECTION.status, TransactionStatus=Ts.IN_COLLECTION.status,
+                         SettlementStatus=Ss.CHARGED_BACK.status)
+
+
+def collection_failed(tn, rn, at=now):
+    return WSEventReport(TransactionNumber=tn, ReferenceNumber=rn, EventDateTime=at,
+                         EventType=Et.COLLECTION_FAILED.status, TransactionStatus=Ts.UNCOLLECTED_NSF.status,
                          SettlementStatus=Ss.CHARGED_BACK.status)
 
 
