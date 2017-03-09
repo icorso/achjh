@@ -16,7 +16,7 @@ def txs_without_events(tid=None):
     txs = []
     txs_filter = and_(OpenTransaction.responsecode != 'D')
     if tid:
-        txs_filter = and_(OpenTransaction.terminalid == tid, OpenTransaction.responsecode != 'D')
+        txs_filter = and_(OpenTransaction.terminalid == tid, OpenTransaction.responsecode != 'D', OpenTransaction.cardtype == 26)
 
     for tx in db.query_all(OpenTransaction, txs_filter):
         if len(has_events(tx.id)) == 0:

@@ -56,6 +56,7 @@ class OpenTransaction(Base):
     status = Column(Integer)
     amount = Column(Float)
     cardholdername = Column(String)
+    cardtype = Column(Integer)
     orderid = Column(String)
     description = Column(String)
     responsecode = Column(String)
