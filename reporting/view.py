@@ -43,7 +43,7 @@ def reporting(request):
             events_set = returned_nsf_set(t.uniqueref, t.rrn)
         elif '.54' in str(t.amount):  # sent to collection
             events_set = sent_to_collection_set(t.uniqueref, t.rrn)
-        elif '.55' in str(t.amount):  # sent to collection
+        elif '.55' in str(t.amount):  # returned bad account
             events_set = returned_bad_account_set(t.uniqueref, t.rrn)
         elif '.56' in str(t.amount):  # collection failed
             events_set = collection_failed_set(t.uniqueref, t.rrn)
