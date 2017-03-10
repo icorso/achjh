@@ -33,7 +33,7 @@ def reporting(request):
                 tx_date = parent_tx.txndate
                 events_set.append(approved(parent_tx.uniqueref, parent_tx.rrn, at=tx_date + datetime.timedelta(hours=1)))
                 events_set.append(refunded(parent_tx.uniqueref, parent_tx.rrn, at=tx_date + datetime.timedelta(hours=2)))
-        elif '.50' in str(t.amount):  # settled
+        elif '.50' in str(t.amount) or '.90' in str(t.amount):  # settled, .90 amount is for gray area
             events_set = settled_set(t.uniqueref, t.rrn)
         elif '.51' in str(t.amount):  # processed
             events_set = processed_set(t.uniqueref, t.rrn)
@@ -43,6 +43,14 @@ def reporting(request):
             events_set = returned_nsf_set(t.uniqueref, t.rrn)
         elif '.54' in str(t.amount):  # sent to collection
             events_set = sent_to_collection_set(t.uniqueref, t.rrn)
+        elif '.55' in str(t.amount):  # sent to collection
+            events_set = returned_bad_account_set(t.uniqueref, t.rrn)
+        elif '.56' in str(t.amount):  # collection failed
+            events_set = collection_failed_set(t.uniqueref, t.rrn)
+        elif '.60' in str(t.amount):  # return code R01
+            events_set = [r01(t.uniqueref, t.rrn)]
+        elif '.61' in str(t.amount):  # return code R02
+            events_set = [r02(t.uniqueref, t.rrn)]
         else:
             events_set = [approved(t.uniqueref, t.rrn, now - datetime.timedelta(days=1))]
 
@@ -84,7 +92,7 @@ def originated(tn, rn, at=EventDate.ORIGINATED.date):
                          TransactionStatus=Ts.PROCESSED.status, SettlementStatus=Ss.PENDING.status, EventDateTime=at)
 
 
-def settled(tn, rn, at=now - datetime.timedelta(days=8)):
+def settled(tn, rn, at=EventDate.ORIGINATED.date):
     return WSEventReport(TransactionNumber=tn, ReferenceNumber=rn, EventType=Et.SETTLED.status,
                          TransactionStatus=Ts.PROCESSED.status, SettlementStatus=Ss.SETTLED.status, EventDateTime=at)
 
@@ -106,9 +114,27 @@ def collection_failed(tn, rn, at=now):
                          SettlementStatus=Ss.CHARGED_BACK.status)
 
 
+def returned_bad_account(tn, rn, at=now - datetime.timedelta(days=3)):
+    return WSEventReport(TransactionNumber=tn, ReferenceNumber=rn, EventDateTime=at,
+                         EventType=Et.RETURNED_BAD_ACCOUNT.status, TransactionStatus=Ts.CLOSED_ACCOUNT.status,
+                         SettlementStatus=Ss.CHARGED_BACK.status)
+
+
 def refunded(tn, rn, at=now - datetime.timedelta(days=2, hours=5)):
     return WSEventReport(TransactionNumber=tn, ReferenceNumber=rn, EventType=Et.REFUNDED.status,
                          TransactionStatus=Ts.PROCESSED.status, SettlementStatus=Ss.SETTLED.status, EventDateTime=at)
+
+
+def r01(tn, rn, at=now - datetime.timedelta(days=1)):
+    return WSEventReport(TransactionNumber=tn, ReferenceNumber=rn, EventType=Et.BAD_ACCOUNT.status, EventDateTime=at,
+                         TransactionStatus=Ts.PROCESSED.status, SettlementStatus=Ss.NO_SETTLEMENT_NEEDED.status,
+                         ReturnCode='R01')
+
+
+def r02(tn, rn, at=now - datetime.timedelta(days=1)):
+    return WSEventReport(TransactionNumber=tn, ReferenceNumber=rn, EventType=Et.BAD_ACCOUNT.status, EventDateTime=at,
+                         TransactionStatus=Ts.CLOSED_ACCOUNT.status, SettlementStatus=Ss.NO_SETTLEMENT_NEEDED.status,
+                         ReturnCode='R02')
 
 
 def refund_set(tn, rn):
@@ -142,6 +168,15 @@ def returned_nsf_set(tn, rn):
     return [approved(tn, rn), processed(tn, rn), originated(tn, rn), settled(tn, rn), returned_nsf(tn, rn)]
 
 
+def returned_bad_account_set(tn, rn):
+    return [approved(tn, rn), processed(tn, rn), originated(tn, rn), settled(tn, rn), returned_bad_account(tn, rn)]
+
+
 def sent_to_collection_set(tn, rn):
     return [approved(tn, rn), processed(tn, rn), originated(tn, rn), settled(tn, rn), returned_nsf(tn, rn),
             sent_to_collection(tn, rn)]
+
+
+def collection_failed_set(tn, rn):
+    return [approved(tn, rn), processed(tn, rn), originated(tn, rn), settled(tn, rn), sent_to_collection(tn, rn),
+            collection_failed(tn, rn, at=now - datetime.timedelta(days=1))]

@@ -91,6 +91,7 @@ class EventType(Enum):
     REFUNDED = ("Refunded", 6)
     RETURNED_NSF = ("Returned NSF", 16)
     SENT_TO_COLLECTION = ("Sent To Collection", 14)
+    RETURNED_BAD_ACCOUNT = ("Returned Bad Account", 17)
     SETTLED = ("Settled", 12)
     VOIDED = ("Voided", 4)
 
