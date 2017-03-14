@@ -50,7 +50,7 @@ def reporting(request):
 
         db.update(OpenTransaction, OpenTransaction.id == t.id, {'txndate': events_set[0].EventDateTime})
 
-    for t in get_gray_area_txs():  # gray area transactions with amount contains .90
+    for t in get_gray_area_txs():  # gray area transactions which amount contains .90
         events.append(collection_failed(tn=t.uniqueref, rn=t.rrn))
 
     response = ACHJHResponse()
