@@ -25,7 +25,7 @@ def reporting(request):
                 tx_date = parent_tx.txndate
                 events_set.append(approved(parent_tx.uniqueref, parent_tx.rrn, at=tx_date + datetime.timedelta(hours=1)))
                 events_set.append(refunded(parent_tx.uniqueref, parent_tx.rrn, at=tx_date + datetime.timedelta(hours=2)))
-        elif '.50' in str(t.amount) or '.90' in str(t.amount):  # settled, .90 amount is for gray area
+        elif '.50' in str(t.amount):  # approved, .90 amount is for gray area
             events_set = [approved(t.uniqueref, t.rrn, now - datetime.timedelta(days=1))]
         elif '.51' in str(t.amount):  # processed
             events_set = processed_set(t.uniqueref, t.rrn)
@@ -43,14 +43,14 @@ def reporting(request):
             events_set = [r01(t.uniqueref, t.rrn)]
         elif '.61' in str(t.amount):  # return code R02
             events_set = [r02(t.uniqueref, t.rrn)]
-        else:
+        else:                         # the rest txs become settled
             events_set = settled_set(t.uniqueref, t.rrn)
 
         events.extend(events_set)
 
         db.update(OpenTransaction, OpenTransaction.id == t.id, {'txndate': events_set[0].EventDateTime})
 
-    for t in get_gray_area_txs():  # gray area transactions
+    for t in get_gray_area_txs():  # gray area transactions with amount contains .90
         events.append(collection_failed(tn=t.uniqueref, rn=t.rrn))
 
     response = ACHJHResponse()
