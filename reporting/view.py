@@ -26,7 +26,7 @@ def reporting(request):
                 events_set.append(approved(parent_tx.uniqueref, parent_tx.rrn, at=tx_date + datetime.timedelta(hours=1)))
                 events_set.append(refunded(parent_tx.uniqueref, parent_tx.rrn, at=tx_date + datetime.timedelta(hours=2)))
         elif '.50' in str(t.amount) or '.90' in str(t.amount):  # settled, .90 amount is for gray area
-            events_set = settled_set(t.uniqueref, t.rrn)
+            events_set = [approved(t.uniqueref, t.rrn, now - datetime.timedelta(days=1))]
         elif '.51' in str(t.amount):  # processed
             events_set = processed_set(t.uniqueref, t.rrn)
         elif '.52' in str(t.amount):  # originated
@@ -44,7 +44,7 @@ def reporting(request):
         elif '.61' in str(t.amount):  # return code R02
             events_set = [r02(t.uniqueref, t.rrn)]
         else:
-            events_set = [approved(t.uniqueref, t.rrn, now - datetime.timedelta(days=1))]
+            events_set = settled_set(t.uniqueref, t.rrn)
 
         events.extend(events_set)
 
