@@ -1,8 +1,9 @@
 import logging
+import os
 from logging.handlers import RotatingFileHandler
 import sys
 
-LOGFILE = "./achjh.log"
+LOGFILE = str(os.path.dirname(os.path.abspath(__file__))) + "/achjh.log"
 
 log = logging.getLogger('')
 log.setLevel(logging.INFO)
