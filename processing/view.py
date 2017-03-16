@@ -5,6 +5,7 @@ from processing.data import DEFAULT_AUTH, VELOCITY_COUNT, UNSUFFICIENT_FUNDS, IN
 from utils import unwrap, rand_str
 
 bad_refund_state = "BADRFD"
+wrong_routing_number = 'The RoutingNumber (%s) is not a valid Routing Number'
 
 
 def processing(request):
@@ -24,8 +25,7 @@ def processing(request):
             response = UNSUFFICIENT_FUNDS
         if '.04' in str(request.transaction.TotalAmount):
             response = INVALID_ROUTING_NUM
-            message = response.AuthorizeTransactionResult.ResponseMessage % request.transaction.RoutingNumber
-            response.AuthorizeTransactionResult.ResponseMessage = message
+            response.AuthorizeTransactionResult.ResponseMessage = wrong_routing_number % request.transaction.RoutingNumber
 
     if 'VoidTransaction' in request.tag:
         response = DEFAULT_VOID
