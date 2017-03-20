@@ -9,7 +9,7 @@ def reporting(request):
     events = []
     db = DbSession()
 
-    for t in txs_without_events(tid=121):
+    for t in txs_without_events(terminal_id=121):
         events_set = []
 
         if t.originaltransactionid:  # refunds
@@ -26,7 +26,7 @@ def reporting(request):
                 events_set.append(approved(parent_tx.uniqueref, parent_tx.rrn, at=tx_date + datetime.timedelta(hours=1)))
                 events_set.append(refunded(parent_tx.uniqueref, parent_tx.rrn, at=tx_date + datetime.timedelta(hours=2)))
         elif '.50' in str(t.amount):  # approved, .90 amount is for gray area
-            events_set = [approved(t.uniqueref, t.rrn, now - datetime.timedelta(days=1))]
+            events_set = [approved(t.uniqueref, t.rrn, NOW - datetime.timedelta(days=1))]
         elif '.51' in str(t.amount):  # processed
             events_set = processed_set(t.uniqueref, t.rrn)
         elif '.52' in str(t.amount):  # originated
@@ -53,8 +53,7 @@ def reporting(request):
     for t in get_gray_area_txs():  # gray area transactions which amount contains .90
         events.append(collection_failed(tn=t.uniqueref, rn=t.rrn))
 
-    response = ACHJHResponse()
-    response.events = events
+    response = ACHJHResponse(events=events)
     # tnx = get_open_tnx()
     # response = SETTLED.with_tn(tnx.uniqueref).with_rn(tnx.rrn).build()
     return response

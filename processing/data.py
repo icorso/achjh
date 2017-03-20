@@ -4,7 +4,7 @@ from processing.responses import AuthorizeTransactionResponse, BaseTransactionRe
     RefundTransactionResponse
 from utils import rand_str
 
-now = datetime.datetime.now()
+NOW = datetime.datetime.now()
 
 
 DEFAULT_BASE_RESULT = BaseTransactionResult(
@@ -12,7 +12,7 @@ DEFAULT_BASE_RESULT = BaseTransactionResult(
     Success=True,
     Error=False,
     ResponseCode='Success',
-    ActualDate=now,
+    ActualDate=NOW,
     ResponseMessage=None,
     OriginatedAs='ACH'
 )
@@ -23,7 +23,7 @@ DEFAULT_AUTH = AuthorizeTransactionResponse(
         Success=True,
         Error=False,
         ResponseCode='Success',
-        ActualDate=now - datetime.timedelta(days=1),
+        ActualDate=NOW - datetime.timedelta(days=1),
         ResponseMessage=None,
         OriginatedAs='ACH'
     )
@@ -35,7 +35,7 @@ VELOCITY_COUNT = AuthorizeTransactionResponse(
         Success=False,
         Error=False,
         ResponseCode='Velocity_Count',
-        ActualDate=now,
+        ActualDate=NOW,
         ResponseMessage='The following velocity exceptions occurred processing the transaction: Period_Count_Exception',
         OriginatedAs='ACH'
     )
@@ -47,7 +47,7 @@ UNSUFFICIENT_FUNDS = AuthorizeTransactionResponse(
         Success=False,
         Error=False,
         ResponseCode='Insufficient_Funds',
-        ActualDate=now,
+        ActualDate=NOW,
         ResponseMessage='Insufficient_Funds Exception',
         OriginatedAs='ACH'
     )
@@ -59,7 +59,7 @@ INVALID_ROUTING_NUM = AuthorizeTransactionResponse(
         Success=False,
         Error=False,
         ResponseCode='Error_Unspecified',
-        ActualDate=now,
+        ActualDate=NOW,
         ResponseMessage="The RoutingNumber (%s) is not a valid Routing Number",
         OriginatedAs='ACH'
     )
@@ -79,7 +79,7 @@ INVALID_REFUND = RefundTransactionResponse(
         Success=False,
         Error=False,
         ResponseCode='Error_Invalid_State',
-        ActualDate=now,
+        ActualDate=NOW,
         ResponseMessage='Transaction is in a state that cannot be refunded',
         OriginatedAs='ACH'
     )

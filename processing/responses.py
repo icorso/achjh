@@ -23,13 +23,13 @@ class BaseResponse(ComplexModel):
 
 
 class BaseTransactionResult(BaseResponse):
-    ReferenceNumber = String  # K08RKBLGBA3
-    Success = Boolean  # true
-    Error = Boolean  # false
-    ResponseCode = String  # Success
-    ActualDate = DateTime(format=DATETIME)  #2017-01-20T06:49:53.5971618-06:00
+    ReferenceNumber = String
+    Success = Boolean
+    Error = Boolean
+    ResponseCode = String
+    ActualDate = DateTime(format=DATETIME)
     ResponseMessage = String
-    OriginatedAs = String  # ACH
+    OriginatedAs = String
     Data = XmlData(Unicode)
 
 

@@ -8,8 +8,9 @@ from utils import wrap
 
 class ACHJHResponse:
     def __init__(self, tn=None, rn=None, events=None):
-        if events is None:
-            events = []
+        # if events is None:
+        #     events = []
+        self._events = events if events else []
         self._tn = tn
         self._rn = rn
         self._event = None

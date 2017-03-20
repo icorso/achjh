@@ -12,22 +12,21 @@ def get_open_tnx():
     return db.query_first(OpenTransaction, OpenTransaction.uniqueref == uniqref)
 
 
-def txs_without_events(tid=None):
+def txs_without_events(terminal_id=None):
     txs = []
-    txs_filter = and_(OpenTransaction.responsecode != 'D')
-    if tid:
-        txs_filter = and_(OpenTransaction.terminalid == tid, OpenTransaction.responsecode != 'D', OpenTransaction.cardtype == 26)
-
-    for tx in db.query_all(OpenTransaction, txs_filter):
+    txs_filter = [OpenTransaction.responsecode != 'D', OpenTransaction.cardtype == 26]
+    if terminal_id:
+        txs_filter.append(OpenTransaction.terminalid == terminal_id)
+    for tx in db.query_all(OpenTransaction, and_(*txs_filter)):
         if len(has_events(tx.id)) == 0:
             txs.append(tx)
 
     for t in txs:  # exclude parent refund txs
-        opened_tx = filter(lambda OpenTransaction: OpenTransaction.id == t.originaltransactionid, txs)
-        if t.originaltransactionid and len(list(opened_tx)) > 0:
-            txs.remove(list(opened_tx)[0])
+        opened_tx = list(filter(lambda OpenTransaction: OpenTransaction.id == t.originaltransactionid, txs))
+        if t.originaltransactionid and len(opened_tx) > 0:
+            txs.remove(opened_tx[0])
 
-    log.info("Collected " + str(len(txs)) + " transactions without events.")
+    log.info("Collected '" + str(len(txs)) + "' transactions without events.")
     return txs
 
 
@@ -49,3 +48,5 @@ def get_gray_area_txs():
 
 def has_events(tx_id):
     return db.query_all(AchjhTransactionStateHistory, AchjhTransactionStateHistory.transaction_id == tx_id)
+
+txs_without_events()

@@ -34,5 +34,5 @@ def app(environ, start_response):
 
 validator_app = validator(app)
 httpd = make_server('', 8000, validator_app)
-print("Serving on port 8000...")
+log.info("Serving on port 8000...")
 httpd.serve_forever()
