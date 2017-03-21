@@ -48,5 +48,3 @@ def get_gray_area_txs():
 
 def has_events(tx_id):
     return db.query_all(AchjhTransactionStateHistory, AchjhTransactionStateHistory.transaction_id == tx_id)
-
-txs_without_events()
