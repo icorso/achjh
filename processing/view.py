@@ -17,7 +17,6 @@ def processing(request):
         response.AuthorizeTransactionResult.ReferenceNumber = rand_str(11).upper()
 
         if '.01' in str(request.transaction.TotalAmount):  # Error_Invalid_State for refund
-            response = DEFAULT_AUTH
             response.AuthorizeTransactionResult.ReferenceNumber = rand_str(6).upper() + bad_refund_state
         if '.02' in str(request.transaction.TotalAmount):
             response = VELOCITY_COUNT
