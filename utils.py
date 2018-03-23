@@ -1,22 +1,23 @@
 import random
 import string
 from datetime import datetime
-from lxml import etree
 
 DATETIME_PATTERN = '%Y-%m-%dT%H:%M:%S'
 
 
 def unwrap(xml):  # TODO
-    header = '''<?xml version='1.0' encoding='UTF-8'?><S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"><SOAP-ENV:Header/><S:Body>'''
-    footer = '''</S:Body></S:Envelope>'''
+    header = u'''<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body>'''
+    footer = u'''</soap:Body></soap:Envelope>'''
     xml = xml.replace(header, '')
     xml = xml.replace(footer, '')
     return xml
 
 
 def wrap(xml):  # TODO
-    header = '''<?xml version='1.0' encoding='UTF-8'?><S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"><SOAP-ENV:Header/><S:Body>'''
-    footer = '''</S:Body></S:Envelope>'''
+    header = u'''<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soap:Header/><soap:Body>'''
+    footer = u'''</soap:Body></soap:Envelope>'''
     return header + xml + footer
 
 

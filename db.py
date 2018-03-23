@@ -12,7 +12,7 @@ class DbSession(object):
         self.port = '34306'
         self.user = 'wn'
         self.password = 'worldpass1'
-        self.db = 'local_wn'
+        self.db = 'wn51'
         self.engine = create_engine('mysql+mysqldb://' + self.user + ':' + self.password
                                     + '@' + self.host + ':' + self.port + '/' + self.db + '?charset=utf8', echo=False)
 

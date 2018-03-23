@@ -1,7 +1,7 @@
 from lxml import objectify
 
 from processing.data import DEFAULT_AUTH, VELOCITY_COUNT, UNSUFFICIENT_FUNDS, INVALID_ROUTING_NUM, DEFAULT_REFUND, NOW,\
-    DEFAULT_VOID, INVALID_REFUND
+    DEFAULT_VOID, INVALID_REFUND, DUPLICATE_TRANSACTION
 from utils import unwrap, rand_str
 
 bad_refund_state = "BADRFD"
@@ -25,6 +25,8 @@ def processing(request):
         if '.04' in str(request.transaction.TotalAmount):
             response = INVALID_ROUTING_NUM
             response.AuthorizeTransactionResult.ResponseMessage = wrong_routing_number % request.transaction.RoutingNumber
+        if '.05' in str(request.transaction.TotalAmount):
+            response = DUPLICATE_TRANSACTION
 
     if 'VoidTransaction' in request.tag:
         response = DEFAULT_VOID

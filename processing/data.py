@@ -53,6 +53,18 @@ UNSUFFICIENT_FUNDS = AuthorizeTransactionResponse(
     )
 )
 
+DUPLICATE_TRANSACTION = AuthorizeTransactionResponse(
+    AuthorizeTransactionResult=BaseTransactionResult(
+        ReferenceNumber=rand_str(11).upper(),
+        Success=False,
+        Error=False,
+        ResponseCode='Duplicate_Transaction',
+        ActualDate=NOW, #'9999-12-31T23:59:59.9999999',
+        ResponseMessage='This transaction is a duplicate of a previously run transaction. This transaction was ignored.',
+        OriginatedAs='None'
+    )
+)
+
 INVALID_ROUTING_NUM = AuthorizeTransactionResponse(
     AuthorizeTransactionResult=BaseTransactionResult(
         ReferenceNumber=rand_str(11).upper(),
