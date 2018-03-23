@@ -42,5 +42,18 @@ class TransactionsHelper(object):
                 txs.append(t)
         return txs
 
+    def find_refunded_originals(self):
+        txs = []
+        for t in db.query_all(OpenTransaction, OpenTransaction.originaltransactionid != None):
+            if self.is_ach_transaction(t.id):
+                txs.append(self.find_transaction(t.originaltransactionid))
+        return txs
+
+    def is_transaction_closed(self, tx_id):
+        return db.query_first(ClosedTransaction, ClosedTransaction.id == tx_id)
+
+    def is_ach_transaction(self, tx_id):
+        return db.query_first(AchjhTransaction, AchjhTransaction.id == tx_id)
+
     def find_transaction_events(self, tx_id):
         return db.query_all(AchjhTransactionStateHistory, AchjhTransactionStateHistory.transaction_id == tx_id)

@@ -1,3 +1,4 @@
+from constants import EventType
 from db import DbSession
 from db_tables import OpenTransaction
 from reporting.data import *
@@ -13,19 +14,15 @@ def reporting(request):
     for tx in helper.find_no_events_transactions():
         events_set = []
 
-        if tx.originaltransactionid:  # refunds
+        # processing refunds (child) without events
+        if tx.originaltransactionid and helper.is_ach_transaction(tx.originaltransactionid):  # refunds
             events_set = refund_set(tx.uniqueref, tx.rrn)
 
             parent_tx = helper.find_transaction(tx.originaltransactionid)
-            parent_events = helper.find_transaction_events(parent_tx.id)
-            if len(parent_events) > 1:  # if any event exists, add refunded event as the last one
-                last_event_date = parent_events[len(parent_events) - 1].event_date_time
-                events_set.append(refunded(parent_tx.uniqueref, parent_tx.rrn,
-                                           at=last_event_date + datetime.timedelta(hours=1)))
-            else:  # if there are no events then add both approved and refunded events
-                tx_date = parent_tx.txndate
-                events_set.append(approved(parent_tx.uniqueref, parent_tx.rrn, at=tx_date + datetime.timedelta(hours=1)))
-                events_set.append(refunded(parent_tx.uniqueref, parent_tx.rrn, at=tx_date + datetime.timedelta(hours=2)))
+            tx_date = parent_tx.txndate
+            events_set.append(approved(parent_tx.uniqueref, parent_tx.rrn, at=tx_date + datetime.timedelta(hours=1)))
+            events_set.append(refunded(parent_tx.uniqueref, parent_tx.rrn, at=tx_date + datetime.timedelta(hours=2)))
+
         elif '.50' in str(tx.amount):  # approved
             events_set = [approved(tx.uniqueref, tx.rrn, NOW - datetime.timedelta(days=1))]
         elif '.51' in str(tx.amount):  # processed
@@ -53,6 +50,20 @@ def reporting(request):
 
     for tx in helper.find_gray_area_transactions():  # gray area transactions which amount contains .90
         events.append(collection_failed(tn=tx.uniqueref, rn=tx.rrn))
+
+    # processing original refunds
+    for tx in helper.find_refunded_originals():
+        parent_events = helper.find_transaction_events(tx.id)
+        last_event = parent_events[len(parent_events) - 1]
+
+        if helper.is_transaction_closed(tx.id):
+            if last_event.event_type == EventType.SETTLED.tid:
+                events.append(refunded(tx.uniqueref, tx.rrn, at=last_event.event_date_time + datetime.timedelta(hours=2)))
+        else:
+            if last_event.event_type == EventType.ORIGINATED.tid:
+                events.append(refunded(tx.uniqueref, tx.rrn, at=last_event.event_date_time + datetime.timedelta(hours=1)))
+            elif last_event.event_type == EventType.REFUNDED.tid:
+                events.append(settled(tx.uniqueref, tx.rrn, at=last_event.event_date_time + datetime.timedelta(hours=2)))
 
     response = ACHJHResponse(events=events)
     return response
