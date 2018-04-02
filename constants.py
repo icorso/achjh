@@ -94,6 +94,8 @@ class EventType(Enum):
     RETURNED_BAD_ACCOUNT = ("Returned Bad Account", 17)
     SETTLED = ("Settled", 12)
     VOIDED = ("Voided", 4)
+    UNAUTHORIZED = ("Unauthorized", 21)
+    NOTICE_OF_CHANGE = ("Notice Of Change", 19)
 
     def __init__(self, status, tid):
         self.status = status
@@ -105,6 +107,6 @@ class EventType(Enum):
     def status(self):
         return str(self.status)
 
-    def tid(self):
+    def tid(self):  # enum AchJhEventTypeEnum index
         return str(self.tid)
 

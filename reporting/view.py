@@ -18,11 +18,6 @@ def reporting(request):
         if tx.originaltransactionid and helper.is_ach_transaction(tx.originaltransactionid):  # refunds
             events_set = refund_set(tx.uniqueref, tx.rrn)
 
-            parent_tx = helper.find_transaction(tx.originaltransactionid)
-            tx_date = parent_tx.txndate
-            events_set.append(approved(parent_tx.uniqueref, parent_tx.rrn, at=tx_date + datetime.timedelta(hours=1)))
-            events_set.append(refunded(parent_tx.uniqueref, parent_tx.rrn, at=tx_date + datetime.timedelta(hours=2)))
-
         elif '.50' in str(tx.amount):  # approved
             events_set = [approved(tx.uniqueref, tx.rrn, NOW - datetime.timedelta(days=1))]
         elif '.51' in str(tx.amount):  # processed
@@ -41,6 +36,14 @@ def reporting(request):
             events_set = [r01(tx.uniqueref, tx.rrn)]
         elif '.61' in str(tx.amount):  # return code R02
             events_set = [r02(tx.uniqueref, tx.rrn)]
+        elif '.70' in str(tx.amount):  # return Unauthorized
+            events_set = [unauthorized(tx.uniqueref, tx.rrn)]
+        elif '.71' in str(tx.amount):  # return Processing error
+            events_set = processing_error_set(tx.uniqueref, tx.rrn)
+        elif '.72' in str(tx.amount):  # return Notice of change
+            events_set = notice_of_change_set(tx.uniqueref, tx.rrn)
+        elif '.73' in str(tx.amount):  # return Notice of change declined
+            events_set = notice_of_change_declined_set(tx.uniqueref, tx.rrn)
         else:                         # the rest txs become settled
             events_set = settled_set(tx.uniqueref, tx.rrn)
 
