@@ -1,9 +1,12 @@
+from datetime import timedelta
+
 from constants import EventType
 from db import DbSession
 from db_tables import OpenTransaction
 from reporting.data import *
 from reporting.helper import TransactionsHelper
 from reporting.response import ACHJHResponse
+from utils import rand_num
 
 
 def reporting(request):
@@ -44,7 +47,11 @@ def reporting(request):
             events_set = notice_of_change_set(tx.uniqueref, tx.rrn)
         elif '.73' in str(tx.amount):  # return Notice of change declined
             events_set = notice_of_change_declined_set(tx.uniqueref, tx.rrn)
-        else:                         # the rest txs become settled
+        elif '.77' in str(tx.amount):  # return non-existing RRN
+            events_set = [approved(tx.uniqueref, rand_num(10))]
+        elif '.80' in str(tx.amount):  # return unknown event type
+            events_set = [unknown_event_type(tx.uniqueref, tx.rrn)]
+        else:                         # the rest txs become settled, see error in log: "not found ACH JH order with rrn"
             events_set = settled_set(tx.uniqueref, tx.rrn)
 
         events.extend(events_set)
@@ -61,12 +68,17 @@ def reporting(request):
 
         if helper.is_transaction_closed(tx.id):
             if last_event.event_type == EventType.SETTLED.tid:
-                events.append(refunded(tx.uniqueref, tx.rrn, at=last_event.event_date_time + datetime.timedelta(hours=2)))
+                events.append(refunded(tx.uniqueref, tx.rrn, last_event.event_date_time + timedelta(hours=2)))
         else:
             if last_event.event_type == EventType.ORIGINATED.tid:
-                events.append(refunded(tx.uniqueref, tx.rrn, at=last_event.event_date_time + datetime.timedelta(hours=1)))
+                events.append(refunded(tx.uniqueref, tx.rrn, last_event.event_date_time + timedelta(hours=1)))
             elif last_event.event_type == EventType.REFUNDED.tid:
-                events.append(settled(tx.uniqueref, tx.rrn, at=last_event.event_date_time + datetime.timedelta(hours=2)))
+                if float(tx.amount) == 16.52:
+                    events.append(returned_nsf(tx.uniqueref, tx.rrn, last_event.event_date_time + timedelta(hours=2)))
+                else:
+                    events.append(settled(tx.uniqueref, tx.rrn, last_event.event_date_time + timedelta(hours=2)))
+            elif last_event.event_type == EventType.SETTLED.tid and float(tx.amount) == 17.52:
+                    events.append(returned_bad_account(tx.uniqueref, tx.rrn, last_event.event_date_time + timedelta(hours=2)))
 
     response = ACHJHResponse(events=events)
     return response

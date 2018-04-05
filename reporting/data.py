@@ -4,6 +4,7 @@ from constants import EventType as Et
 from constants import SettlementStatus as Ss
 from constants import TransactionStatus as Ts
 from reporting.reports.historical_event_report import WSEventReport
+from utils import rand_str
 
 NOW = (datetime.datetime.now()).replace(hour=0, minute=0, second=0)
 
@@ -11,6 +12,11 @@ NOW = (datetime.datetime.now()).replace(hour=0, minute=0, second=0)
 def approved(tn, rn, at=NOW - datetime.timedelta(days=9, hours=22)):
     return WSEventReport(TransactionNumber=tn, ReferenceNumber=rn, EventType=Et.APPROVED.status, EventDateTime=at,
                          TransactionStatus=Ts.APPROVED.status, SettlementStatus=Ss.TO_BE_ORIGINATED.status)
+
+
+def unknown_event_type(tn, rn, at=NOW + datetime.timedelta(minutes=1)):
+    return WSEventReport(TransactionNumber=tn, ReferenceNumber=rn, EventType=rand_str(10), EventDateTime=at,
+                         TransactionStatus=Ts.ERROR.status, SettlementStatus=Ss.NO_SETTLEMENT_NEEDED.status)
 
 
 def processed(tn, rn, at=NOW - datetime.timedelta(days=9, hours=20)):
