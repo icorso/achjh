@@ -61,7 +61,7 @@ DUPLICATE_TRANSACTION = AuthorizeTransactionResponse(
         ResponseCode='Duplicate_Transaction',
         ActualDate=NOW, #'9999-12-31T23:59:59.9999999',
         ResponseMessage='This transaction is a duplicate of a previously run transaction. This transaction was ignored.',
-        OriginatedAs='None'
+        OriginatedAs='ACH'
     )
 )
 

@@ -35,10 +35,16 @@ def reporting(request):
             events_set = returned_bad_account_set(tx.uniqueref, tx.rrn)
         elif '.56' in str(tx.amount):  # collection failed
             events_set = collection_failed_set(tx.uniqueref, tx.rrn)
+        elif '.57' in str(tx.amount):  # approved than charged back
+            events_set = charged_back_set(tx.uniqueref, tx.rrn)
+        elif '.58' in str(tx.amount):  # the "processed" event is duplicated
+            events_set = duplicated_events_set(tx.uniqueref, tx.rrn)
         elif '.60' in str(tx.amount):  # return code R01
             events_set = [r01(tx.uniqueref, tx.rrn)]
         elif '.61' in str(tx.amount):  # return code R02
             events_set = [r02(tx.uniqueref, tx.rrn)]
+        elif '.62' in str(tx.amount):  # return code R30
+            events_set = [r30(tx.uniqueref, tx.rrn)]
         elif '.70' in str(tx.amount):  # return Unauthorized
             events_set = [unauthorized(tx.uniqueref, tx.rrn)]
         elif '.71' in str(tx.amount):  # return Processing error

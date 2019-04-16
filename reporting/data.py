@@ -74,6 +74,12 @@ def r02(tn, rn, at=NOW - datetime.timedelta(days=1)):
                          ReturnCode='R02')
 
 
+def r30(tn, rn, at=NOW - datetime.timedelta(days=1)):
+    return WSEventReport(TransactionNumber=tn, ReferenceNumber=rn, EventType=Et.BAD_ACCOUNT.status, EventDateTime=at,
+                         TransactionStatus=Ts.CLOSED_ACCOUNT.status, SettlementStatus=Ss.NO_SETTLEMENT_NEEDED.status,
+                         ReturnCode='R30')
+
+
 def unauthorized(tn, rn, at=NOW - datetime.timedelta(days=1)):
     return WSEventReport(TransactionNumber=tn, ReferenceNumber=rn, EventType=Et.UNAUTHORIZED.status, EventDateTime=at,
                          TransactionStatus=Ts.ERROR.status, SettlementStatus=Ss.NO_SETTLEMENT_NEEDED.status)
@@ -92,6 +98,11 @@ def notice_of_change(tn, rn, at=NOW - datetime.timedelta(days=7)):
 def notice_of_change_charged_back(tn, rn, at=NOW - datetime.timedelta(days=7)):
     return WSEventReport(TransactionNumber=tn, ReferenceNumber=rn, EventType=Et.NOTICE_OF_CHANGE.status, EventDateTime=at,
                          TransactionStatus=Ts.PROCESSED.status, SettlementStatus=Ss.CHARGED_BACK.status)
+
+
+def charged_back(tn, rn, at=NOW - datetime.timedelta(days=1)):
+    return WSEventReport(TransactionNumber=tn, ReferenceNumber=rn, EventType=Et.CHARGED_BACK.status, EventDateTime=at,
+                         TransactionStatus=Ts.CLOSED_ACCOUNT.status, SettlementStatus=Ss.CHARGED_BACK.status)
 
 
 def refund_set(tn, rn):
@@ -121,6 +132,10 @@ def originated_set(tn, rn):
     return [approved(tn, rn), processed(tn, rn), originated(tn, rn)]
 
 
+def duplicated_events_set(tn, rn):
+    return [approved(tn, rn), processed(tn, rn), processed(tn, rn), originated(tn, rn)]
+
+
 def returned_nsf_set(tn, rn):
     return [approved(tn, rn), processed(tn, rn), originated(tn, rn), settled(tn, rn), returned_nsf(tn, rn)]
 
@@ -144,8 +159,12 @@ def processing_error_set(tn, rn):
 
 
 def notice_of_change_set(tn, rn):
-    return [approved(tn, rn), processed(tn, rn), originated(tn, rn), settled(tn, rn), notice_of_change(tn, rn)]
+    return [approved(tn, rn), processed(tn, rn), originated(tn, rn), originated(tn, rn), settled(tn, rn), notice_of_change(tn, rn)]
 
 
 def notice_of_change_declined_set(tn, rn):
     return [approved(tn, rn), processed(tn, rn), originated(tn, rn), settled(tn, rn), notice_of_change_charged_back(tn, rn)]
+
+
+def charged_back_set(tn, rn):
+    return [approved(tn, rn), charged_back(tn, rn)]

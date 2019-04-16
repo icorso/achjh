@@ -1,3 +1,4 @@
+import time
 from lxml import objectify
 
 from processing.data import DEFAULT_AUTH, VELOCITY_COUNT, UNSUFFICIENT_FUNDS, INVALID_ROUTING_NUM, DEFAULT_REFUND, NOW,\
@@ -20,8 +21,8 @@ def processing(request):
             response.AuthorizeTransactionResult.ReferenceNumber = rand_str(6).upper() + bad_refund_state
         if '.02' in str(request.transaction.TotalAmount):
             response = VELOCITY_COUNT
-        if '.03' in str(request.transaction.TotalAmount):
-            response = UNSUFFICIENT_FUNDS
+        if '.03' in str(request.transaction.TotalAmount):  # impossible response code which set as Null into the
+            response = UNSUFFICIENT_FUNDS                  # ach_jh_transaction.response_code field
         if '.04' in str(request.transaction.TotalAmount):
             response = INVALID_ROUTING_NUM
             response.AuthorizeTransactionResult.ResponseMessage = wrong_routing_number % request.transaction.RoutingNumber
@@ -42,5 +43,4 @@ def processing(request):
 
         if str(request.originalReferenceNumber).endswith(bad_refund_state):
             response = INVALID_REFUND
-
     return response

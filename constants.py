@@ -95,6 +95,7 @@ class EventType(Enum):
     SETTLED = ("Settled", 12)
     VOIDED = ("Voided", 4)
     UNAUTHORIZED = ("Unauthorized", 21)
+    CHARGED_BACK = ("Charged Back", 22)
     NOTICE_OF_CHANGE = ("Notice Of Change", 19)
 
     def __init__(self, status, tid):

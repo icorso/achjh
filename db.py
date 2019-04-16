@@ -9,10 +9,10 @@ class DbSession(object):
 
     def __init__(self):
         self.host = '127.0.0.1'
-        self.port = '34306'
+        self.port = '3306'
         self.user = 'wn'
         self.password = 'worldpass1'
-        self.db = 'wn51'
+        self.db = 'R_5_7_1_6_A_ARCHIVING'
         self.engine = create_engine('mysql+mysqldb://' + self.user + ':' + self.password
                                     + '@' + self.host + ':' + self.port + '/' + self.db + '?charset=utf8', echo=False)
 
